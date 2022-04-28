@@ -1,4 +1,4 @@
-# book-bingo-fastapi
+# 読書推進Bingo
 マスが数字の代わりに本になっているビンゴ.
 
 ## 目的
