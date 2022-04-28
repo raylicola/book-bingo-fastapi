@@ -12,6 +12,5 @@
 
 ## 使用技術
 * FastAPI
-* Docker
 * [Streamlit](https://streamlit.io/)
 * [楽天ブックス書籍検索API](https://webservice.rakuten.co.jp/documentation/books-book-search)
