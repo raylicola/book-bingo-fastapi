@@ -1,10 +1,9 @@
-from sqlite3 import connect
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # DBの格納先
-SQLALCHEMY_DATABASE_URL = "sqlite:///.sql_app.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 
 # 操作を行う基盤
 engine = create_engine(
