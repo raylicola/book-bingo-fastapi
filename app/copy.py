@@ -15,6 +15,22 @@ get_cards_url = 'http://127.0.0.1:8000/get_cards/' + str(user_id)
 res = requests.get(get_cards_url)
 cards = res.json()
 st.write(cards)
+books_genre = (
+        '小説・エッセイ', 'ビジネス・経済・就職', '旅行・留学・アウトドア',
+        '人文・思想・社会', 'ホビー・スポーツ・美術', '美容・暮らし・健康',
+        '科学・技術', '文庫', '新書',
+)
+books_genre_id_mapping = {
+        '小説・エッセイ': '001004',
+        'ビジネス・経済・就職': '001006',
+        '旅行・留学・アウトドア': '001007',
+        '人文・思想・社会': '001008',
+        'ホビー・スポーツ・美術': '001009',
+        '美容・暮らし・健康': '001010',
+        '科学・技術': '001012',
+        '文庫': '001019',
+        '新書': '001020',
+    }
 
 # key: sequence_num, value: card_id
 card_dict = {}
@@ -47,25 +63,14 @@ if card_state_dict[sequence_num] == True:
 else:
     selected_genre = st.sidebar.selectbox(
         'ジャンルを選択してください',
-        (
-            '小説・エッセイ', 'ビジネス・経済・就職', '旅行・留学・アウトドア',
-            '人文・思想・社会', 'ホビー・スポーツ・美術', '美容・暮らし・健康',
-            '科学・技術', '文庫', '新書',
-        ))
-    genre_id_mapping = {
-        '小説・エッセイ': '0010',
-        'ビジネス・経済・就職': '0010',
-        '旅行v留学・アウトドア': '0010',
-        '人文・思想・社会': '0010',
-        'ホビー・スポーツ・美術': '0010',
-        '美容・暮らし・健康': '0010',
-        '科学・技術': '0010',
-        '文庫': '0010',
-        '新書': '0010',
-    }
-    genre_id = genre_id_mapping[selected_genre]
+        books_genre
+        )
+    genre_id = books_genre_id_mapping[selected_genre]
     if st.sidebar.button('カードを作成'):
         card_create_url = 'http://127.0.0.1:8000/create_card/' + str(user_id) + '/' + str(sequence_num) + '/?books_genre_id=' + genre_id
+        st.write(card_create_url)
+        res = requests.post(card_create_url)
+        st.write(res.json())
         card_state_dict[sequence_num] == True
 
 
