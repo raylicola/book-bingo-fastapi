@@ -15,6 +15,9 @@ class CardCreate(BaseModel):
     sequence_num: int
     genre_id: str
 
+class CardDelete(BaseModel):
+    card_id: int
+
 class Card(CardCreate):
     card_id: int
     is_finished: bool

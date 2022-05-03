@@ -34,6 +34,12 @@ def create_user(db: Session, user: schemas.User):
     else:
         raise HTTPException(status_code=404, detail="This username is already registered.")
 
+# 指定したカードを削除
+def delete_card(db: Session, card: schemas.Card):
+    db_card = db.query(models.Card).filter(models.Card.card_id == card.card_id).one()
+    db.delete(db_card)
+    db.commit()
+    db.refresh(db_card)
 
 # カード作成
 def create_card(db: Session, card: schemas.Card):
@@ -88,11 +94,3 @@ def get_cards(db: Session, user_id: int):
 def get_card_items(db: Session, card_id: int):
     card_items = db.query(models.CardItem).filter(models.CardItem.card_id == card_id).all()
     return card_items
-
-
-# 指定したカードを削除
-def delete_card(db: Session, card_id: int):
-    db_card = db.query(models.Card).filter(models.Card.card_id == card_id).one()
-    db.delete(db_card)
-    db.commit()
-    db.refresh(db_card)

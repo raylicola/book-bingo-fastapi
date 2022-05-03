@@ -31,13 +31,17 @@ async def signup_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 async def create_card(card: schemas.CardCreate, db: Session = Depends(get_db)):
     return crud.create_card(db=db, card=card)
 
+@app.post('/delete_card')
+async def create_card(card: schemas.CardDelete, db: Session = Depends(get_db)):
+    return crud.delete_card(db=db, card=card)
+
 
 @app.get('/get_cards/{user_id}')
 async def get_cards(user_id: str, db: Session = Depends(get_db)):
     return crud.get_cards(db=db, user_id=int(user_id))
 
 
-@app.get('/get_card_item', response_model=List[schemas.CardItem])
-async def get_card(card_id: int, db: Session = Depends(get_db)):
-    return crud.get_card(db=db, card_id=card_id)
+@app.get('/get_card_items/{card_id}', response_model=List[schemas.CardItem])
+async def get_card_items(card_id: str, db: Session = Depends(get_db)):
+    return crud.get_card_items(db=db, card_id=int(card_id))
 
