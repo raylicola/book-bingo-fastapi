@@ -1,4 +1,5 @@
 from typing import List
+from urllib import response
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
@@ -26,19 +27,17 @@ async def login_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 async def signup_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
-@app.post('/create_card/{user_id}/{sequence_num}/?books_genre_id={genre_id}')
-async def create_card(user_id: str, sequence_num: str, genre_id: str, db: Session = Depends(get_db)):
-    return crud.create_card(db=db, user_id=int(user_id), sequence_num=int(sequence_num), books_genre_id=genre_id)
+@app.post('/create_card', response_model=List[schemas.CardItem])
+async def create_card(card: schemas.CardCreate, db: Session = Depends(get_db)):
+    return crud.create_card(db=db, card=card)
 
 
-@app.get('/get_cards/{user_id}', response_model=List[schemas.Card])
+@app.get('/get_cards/{user_id}')
 async def get_cards(user_id: str, db: Session = Depends(get_db)):
     return crud.get_cards(db=db, user_id=int(user_id))
 
-@app.get('/get_card/{card_id}', response_model=schemas.Card)
-async def get_card(card_id: str, db: Session = Depends(get_db)):
-    return crud.get_cards(db=db, card_id=int(card_id))
 
-@app.get('/get_card_item/{card_id}', response_model=List[schemas.CardItem])
+@app.get('/get_card_item', response_model=List[schemas.CardItem])
 async def get_card(card_id: int, db: Session = Depends(get_db)):
     return crud.get_card(db=db, card_id=card_id)
+

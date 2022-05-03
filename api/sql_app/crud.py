@@ -36,22 +36,23 @@ def create_user(db: Session, user: schemas.User):
 
 
 # カード作成
-def create_card(db: Session, user_id: int , sequence_num: int, books_genre_id: str):
+def create_card(db: Session, card: schemas.Card):
+    print('crud.create_card')
     db_card = models.Card(
-        user_id = user_id,
-        sequence_num = sequence_num,
+        user_id = card.user_id,
+        sequence_num = card.sequence_num,
         is_finished = False
         )
     db.add(db_card)
     db.commit()
     db.refresh(db_card)
-    # 今追加したレコードのid
-    card_id = db.query(models.Card).count() - 1
-    create_card_items(db=db, card_id=card_id, books_genre_id=books_genre_id)
+    # 今追加したレコードのidを取得
+    added_card = db.query(models.Card).filter(models.Card.user_id == card.user_id).filter(models.Card.sequence_num == card.sequence_num).one().card_id
+    create_card_items(db=db, card_id=added_card, books_genre_id=card.genre_id)
 
 
 # カードアイテム作成
-def create_card_items(db: Session, card_id: int , books_genre_id: str):
+def create_card_items(db: Session, card_id: int, books_genre_id: str):
     params = {
         'applicationId': APP_ID,
         'books_genre_id': books_genre_id,
@@ -63,30 +64,25 @@ def create_card_items(db: Session, card_id: int , books_genre_id: str):
         title = card_items[i]['Item']['title']
         item_url = card_items[i]['Item']['itemUrl']
         image_url = card_items[i]['Item']['largeImageUrl']
-        db_card_item = models.CardItem(
+        db_card_items = models.CardItem(
             card_id = card_id,
             title = title,
             item_url = item_url,
             image_url = image_url,
             is_finished = False,
         )
-        db.add(db_card_item)
+        db.add(db_card_items)
         db.commit()
-        db.refresh(db_card_item)
+        db.refresh(db_card_items)
 
 # ユーザーの全てのカードを取得
 def get_cards(db: Session, user_id: int):
-    card = db.query(models.Card) \
+    db_card = db.query(models.Card) \
         .filter(models.Card.user_id == user_id) \
         .filter(models.Card.is_finished == False) \
         .all()
-    return card
+    return db_card
 
-# カード1枚を取得
-def get_card(db: Session, card_id: int):
-    card = db.query(models.Card) \
-        .filter(models.Card.card_id == card_id).one()
-    return card
 
 # カードの内容を取得
 def get_card_items(db: Session, card_id: int):

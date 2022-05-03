@@ -13,8 +13,11 @@ user_name = 'Yamada'
 finish_num = 0
 get_cards_url = 'http://127.0.0.1:8000/get_cards/' + str(user_id)
 res = requests.get(get_cards_url)
+st.write(res)
 cards = res.json()
-st.write(cards)
+st.write('cards')
+st.json(cards)
+
 books_genre = (
         '小説・エッセイ', 'ビジネス・経済・就職', '旅行・留学・アウトドア',
         '人文・思想・社会', 'ホビー・スポーツ・美術', '美容・暮らし・健康',
@@ -36,7 +39,10 @@ books_genre_id_mapping = {
 card_dict = {}
 if len(card_dict) != 0:
     for i in range(MAX_CARD_NUM):
-        card_dict[cards['sequence_num']] = cards['card_id']
+        card_dict[cards[i]['sequence_num']] = cards['card_id']
+
+st.write('card_dict')
+st.write(card_dict)
 
 # key: sequence_num, valur: カードが存在するか否か
 card_state_dict = {}
@@ -56,7 +62,7 @@ sequence_num = st.sidebar.radio(
     (1,2,3))
 
 if card_state_dict[sequence_num] == True:
-    card_id = card_dict[sequence_num]
+    card_id = card_dict['sequence_num']
     if st.sidebar.button('カードを削除'):
         card_delete_url = 'http://127.0.0.1:8000/delete_card/' + str(card_id)
         card_state_dict[sequence_num] == False
@@ -67,21 +73,25 @@ else:
         )
     genre_id = books_genre_id_mapping[selected_genre]
     if st.sidebar.button('カードを作成'):
-        card_create_url = 'http://127.0.0.1:8000/create_card/' + str(user_id) + '/' + str(sequence_num) + '/?books_genre_id=' + genre_id
-        st.write(card_create_url)
-        res = requests.post(card_create_url)
-        st.write(res.json())
+        create_card = 'http://127.0.0.1:8000/create_card'
+        data = {
+            'user_id': user_id,
+            'sequence_num': sequence_num,
+            'genre_id': genre_id,
+        }
+        res = requests.post(
+            create_card,
+            data=json.dumps(data)
+        )
         card_state_dict[sequence_num] == True
 
 
 # ビンゴカード
 for i in range(MAX_CARD_NUM):
     if card_state_dict[sequence_num] == True:
-        get_card_url = 'http://127.0.0.1:8000/get_card/' + str(card_dict[cards['sequence_num']])
-        res = requests.get(get_card_url)
-        card = res.json()
-        st.write(cards)
-        get_card_items_url = 'http://127.0.0.1:8000/get_card_items/' + str(card['card_id'])
+        get_card_items_url = 'http://127.0.0.1:8000/get_card_items'
+        data = {
+        }
         res = requests.get(get_card_items_url)
         card_items = res.json()
         for i in list(range(3)):

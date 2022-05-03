@@ -13,9 +13,11 @@ class User(UserCreate):
 class CardCreate(BaseModel):
     user_id: int
     sequence_num: int
+    genre_id: str
 
 class Card(CardCreate):
     card_id: int
+    is_finished: bool
     class Config:
         orm_mode = True
 
