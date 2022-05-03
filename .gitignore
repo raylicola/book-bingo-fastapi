@@ -1,1 +1,3 @@
 venv
+sql_app.db
+aip/sql_app/__pycache__
