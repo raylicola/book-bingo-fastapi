@@ -21,7 +21,6 @@ def get_login_user(db: Session, user: schemas.User):
 def create_user(db: Session, user: schemas.User):
     registered = db.query(models.User) \
         .filter(models.User.user_name == user.user_name).all()
-    print(len(registered))
     if len(registered)==0:
         db_user = models.User(
             user_name=user.user_name,
@@ -46,10 +45,11 @@ def update_user(db: Session, user: schemas.User):
 def delete_card(db: Session, card: schemas.Card):
     db_card = db.query(models.Card).filter(models.Card.card_id == card.card_id).one()
     db.delete(db_card)
-    db.query(models.CardItem).filter(models.CardItem.card_id == card.card_id).delete()
+    db_card_items = db.query(models.CardItem).filter(models.CardItem.card_id == card.card_id).all()
+    for data in db_card_items:
+        db.delete(data)
     db.commit()
-    db.refresh(db_card)
-    print('削除完了')
+    #db.refresh(db_card)
 
 # 指定したカードをビンゴ済にする
 def update_card(db: Session, card: schemas.Card):
@@ -69,7 +69,6 @@ def update_card_item(db: Session, card_item: schemas.CardItem):
 
 # カード作成
 def create_card(db: Session, card: schemas.Card):
-    print('crud.create_card')
     db_card = models.Card(
         user_id = card.user_id,
         sequence_num = card.sequence_num,

@@ -1,5 +1,6 @@
 # TODO:
 # 商品検索で同じものばかり出てこないよう改善
+# カード削除時にrefreshするとエラーが発生する
 from calendar import c
 from tkinter import Image
 import streamlit as st
@@ -228,6 +229,3 @@ except:
                 st.success('ユーザー登録が完了しました。ログイン画面からログインしてください。')
             elif res.status_code==404:
                 st.error('ユーザーは既に登録されています。')
-
-    elif page == 'ビンゴ':
-        st.error('ログインしてください')
