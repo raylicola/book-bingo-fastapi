@@ -2,3 +2,4 @@ venv
 sql_app.db
 api/img
 api/sql_app/__pycache__
+api/sql_app/.deta
