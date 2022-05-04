@@ -44,11 +44,10 @@ def delete_card(db: Session, card: schemas.Card):
 # カードアイテムのアップデート
 def update_card_item(db: Session, card_item: schemas.CardItem):
     db_card_item = db.query(models.CardItem).filter(models.CardItem.card_item_id==card_item.card_item_id).one()
-    print(db_card_item.is_finished)
     db_card_item.is_finished = not bool(db_card_item.is_finished)
-    print(db_card_item.is_finished)
     db.commit()
     db.refresh(db_card_item)
+    return db_card_item
 
 # カード作成
 def create_card(db: Session, card: schemas.Card):
