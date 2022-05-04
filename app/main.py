@@ -92,7 +92,7 @@ try:
                     card_delete_url,
                     data=json.dumps(data)
                 )
-                st.success('カードを削除しました')
+                st.sidebar.write('カードを削除しました')
                 card_state_dict[sequence_num] == False
         else:
             selected_genre = st.sidebar.selectbox(
@@ -163,7 +163,6 @@ try:
                                     )
                                     checked_cols.append(i*3+j+1)
 
-                st.write(checked_cols)
                 if judge_bingo(checked_cols) != None:
                     if st.sidebar.button('ビンゴです！'):
                         delete_card_url = 'http://127.0.0.1:8000/delete_card'
@@ -174,14 +173,17 @@ try:
                             delete_card_url,
                             data=json.dumps(data)
                         )
-                        update_card_url = 'http://127.0.0.1:8000/update_user'
+                        update_user_url = 'http://127.0.0.1:8000/update_user'
                         data = {
                             'user_id': user_id,
                         }
                         res = requests.post(
-                            update_card_url,
+                            update_user_url,
                             data=json.dumps(data)
                         )
+                        st.session_state.finished_num = res.json()['finished_num']
+                        st.sidebar.write('カードを削除しました')
+                        card_state_dict[sequence_num] == False
 
 except:
     if page == 'ログイン':

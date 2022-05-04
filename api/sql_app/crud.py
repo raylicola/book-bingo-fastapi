@@ -49,6 +49,7 @@ def delete_card(db: Session, card: schemas.Card):
     db.query(models.CardItem).filter(models.CardItem.card_id == card.card_id).delete()
     db.commit()
     db.refresh(db_card)
+    print('削除完了')
 
 # 指定したカードをビンゴ済にする
 def update_card(db: Session, card: schemas.Card):
