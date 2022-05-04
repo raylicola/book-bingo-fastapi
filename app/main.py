@@ -1,6 +1,5 @@
 # TODO:
 # 商品検索で同じものばかり出てこないよう改善
-# BINGO機能を追加
 from calendar import c
 from tkinter import Image
 import streamlit as st
@@ -58,8 +57,8 @@ try:
     if page in ['ログイン', 'ユーザー登録']:
         st.error('ログイン済みです')
     elif page == 'ビンゴ':
-        get_card_url = 'http://127.0.0.1:8000/get_cards/' + str(user_id)
-        res = requests.get(get_card_url)
+        get_cards_url = 'http://127.0.0.1:8000/get_cards/' + str(user_id)
+        res = requests.get(get_cards_url)
         # key: sequence_num, value: card_id
         cards = res.json()
         card_dict = {}
@@ -165,17 +164,24 @@ try:
                                     checked_cols.append(i*3+j+1)
 
                 st.write(checked_cols)
-                if judge_bingo(checked_cols):
-                    update_card_url = 'http://127.0.0.1:8000/update_card'
-                    data = {
-                        'card_id': card_id,
-                    }
-                    res = requests.post(
-                        card_delete_url,
-                        data=json.dumps(data)
-                    )
+                if judge_bingo(checked_cols) != None:
                     if st.sidebar.button('ビンゴです！'):
-                        pass
+                        delete_card_url = 'http://127.0.0.1:8000/delete_card'
+                        data = {
+                            'card_id': card_id,
+                        }
+                        res = requests.post(
+                            delete_card_url,
+                            data=json.dumps(data)
+                        )
+                        update_card_url = 'http://127.0.0.1:8000/update_user'
+                        data = {
+                            'user_id': user_id,
+                        }
+                        res = requests.post(
+                            update_card_url,
+                            data=json.dumps(data)
+                        )
 
 except:
     if page == 'ログイン':
