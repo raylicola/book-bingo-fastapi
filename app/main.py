@@ -11,6 +11,7 @@ from PIL import Image
 
 MAX_CARD_NUM = 3
 CARD_ITEM_NUM = 9
+APP_URL = 'http://127.0.0.1:8000/'
 
 books_genre = (
         '小説・エッセイ', 'ビジネス・経済・就職', '旅行・留学・アウトドア',
@@ -58,8 +59,8 @@ try:
     if page in ['ログイン', 'ユーザー登録']:
         st.error('ログイン済みです')
     elif page == 'ビンゴ':
-        get_cards_url = 'http://127.0.0.1:8000/get_cards/' + str(user_id)
-        res = requests.get(get_cards_url)
+        get_cards_url = 'get_cards/' + str(user_id)
+        res = requests.get(APP_URL+get_cards_url)
         # key: sequence_num, value: card_id
         cards = res.json()
         card_dict = {}
@@ -85,12 +86,12 @@ try:
         if card_state_dict[sequence_num] == True:
             card_id = card_dict[sequence_num]
             if st.sidebar.button('カードを削除'):
-                card_delete_url = 'http://127.0.0.1:8000/delete_card'
+                card_delete_url = 'delete_card'
                 data = {
                 'card_id': card_id,
                 }
                 res = requests.post(
-                    card_delete_url,
+                    APP_URL+card_delete_url,
                     data=json.dumps(data)
                 )
                 st.sidebar.write('カードを削除しました')
@@ -102,14 +103,14 @@ try:
                 )
             genre_id = books_genre_id_mapping[selected_genre]
             if st.sidebar.button('カードを作成'):
-                create_card_url = 'http://127.0.0.1:8000/create_card'
+                create_card_url = 'create_card'
                 data = {
                     'user_id': user_id,
                     'sequence_num': sequence_num,
                     'genre_id': genre_id,
                 }
                 res = requests.post(
-                    create_card_url,
+                    APP_URL+create_card_url,
                     data=json.dumps(data)
                 )
                 card_state_dict[sequence_num] == True
@@ -119,8 +120,8 @@ try:
         for i in range(1,MAX_CARD_NUM+1):
             if (sequence_num == i) and (card_state_dict[sequence_num] == True):
                 card_id = card_dict[i]
-                get_card_items_url = 'http://127.0.0.1:8000/get_card_items/' + str(card_id)
-                res = requests.get(get_card_items_url)
+                get_card_items_url = 'get_card_items/' + str(card_id)
+                res = requests.get(APP_URL+get_card_items_url)
                 card_items = res.json()
                 checked_cols = []
                 for i in list(range(3)):
@@ -134,7 +135,7 @@ try:
                             image_url = card_items[i*3+j]['image_url']
                             if is_finished==True:
                                 checked_cols.append(i*3+j+1)
-                            update_card_items_url = 'http://127.0.0.1:8000/update_card_item'
+                            update_card_items_url = 'update_card_item'
                             # checkbox = st.checkbox(str(i*3+j+1), value=is_finished)
                             if is_finished == True:
                                 checkbox = st.checkbox(str(i*3+j+1), value=True)
@@ -145,7 +146,7 @@ try:
                                         'card_item_id': card_item_id
                                     }
                                     res = requests.post(
-                                        update_card_items_url,
+                                        APP_URL+update_card_items_url,
                                         data=json.dumps(data)
                                     )
                                     checked_cols.remove(i*3+j+1)
@@ -159,27 +160,27 @@ try:
                                         'card_item_id': card_item_id
                                     }
                                     res = requests.post(
-                                        update_card_items_url,
+                                        APP_URL+update_card_items_url,
                                         data=json.dumps(data)
                                     )
                                     checked_cols.append(i*3+j+1)
 
                 if judge_bingo(checked_cols) != None:
                     if st.sidebar.button('ビンゴです！'):
-                        delete_card_url = 'http://127.0.0.1:8000/delete_card'
+                        delete_card_url = 'delete_card'
                         data = {
                             'card_id': card_id,
                         }
                         res = requests.post(
-                            delete_card_url,
+                            APP_URL+delete_card_url,
                             data=json.dumps(data)
                         )
-                        update_user_url = 'http://127.0.0.1:8000/update_user'
+                        update_user_url = 'update_user'
                         data = {
                             'user_id': user_id,
                         }
                         res = requests.post(
-                            update_user_url,
+                            APP_URL+update_user_url,
                             data=json.dumps(data)
                         )
                         st.session_state.finished_num = res.json()['finished_num']
@@ -196,9 +197,9 @@ except:
             }
             login_button = st.form_submit_button(label='ログイン')
         if login_button:
-            login_url = 'http://127.0.0.1:8000/login'
+            login_url = 'login'
             res = requests.post(
-                login_url,
+                APP_URL+login_url,
                 data=json.dumps(data)
             )
             if res.status_code==200:
@@ -220,9 +221,9 @@ except:
             signup_button = st.form_submit_button(label='登録')
 
         if signup_button:
-            signup_url = 'http://127.0.0.1:8000/signup'
+            signup_url = 'signup'
             res = requests.post(
-                signup_url,
+                APP_URL+signup_url,
                 data=json.dumps(data)
             )
             if res.status_code==200:
