@@ -3,10 +3,9 @@ from . import models, schemas
 from fastapi import HTTPException
 import requests
 import random
+from .secret import URL, APP_ID
 
-# 楽天API検索用
-URL = 'https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404'
-APP_ID = '1070572995802972997'
+
 CARD_ITEM_NUM = 9
 
 # ユーザー認証
