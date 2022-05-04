@@ -1,6 +1,5 @@
 # TODO:
 # 商品検索で同じものばかり出てこないよう改善
-# BINGO済みの画像を生成
 # BINGO機能を追加
 from calendar import c
 from tkinter import Image
@@ -35,6 +34,19 @@ bingo_combination = [
     [1,4,7],[2,5,8],[3,6,9],
     [1,5,9],[3,5,7]
 ]
+def judge_bingo(checked_cols):
+    searched = [
+        [1,2,3],[4,5,6],[7,8,9],
+        [1,4,7],[2,5,8],[3,6,9],
+        [1,5,9],[3,5,7]
+    ]
+    for index, bingo_list in enumerate(searched):
+        for checked_num in checked_cols:
+            if checked_num in bingo_list:
+                bingo_list.remove(checked_num)
+            if len(bingo_list)==0:
+                return index
+
 
 page = st.sidebar.selectbox('ページを選択してください', ['ログイン', 'ユーザー登録', 'ビンゴ'])
 
@@ -137,6 +149,7 @@ try:
                                         data=json.dumps(data)
                                     )
                                     checked_cols.remove(i*3+j+1)
+
                             else:
                                 checkbox = st.checkbox(str(i*3+j+1), value=False)
                                 st.markdown(f'[{title}]({item_url})', unsafe_allow_html=True)
@@ -150,7 +163,20 @@ try:
                                         data=json.dumps(data)
                                     )
                                     checked_cols.append(i*3+j+1)
+
                 st.write(checked_cols)
+                if judge_bingo(checked_cols):
+                    update_card_url = 'http://127.0.0.1:8000/update_card'
+                    data = {
+                        'card_id': card_id,
+                    }
+                    res = requests.post(
+                        card_delete_url,
+                        data=json.dumps(data)
+                    )
+                    if st.sidebar.button('ビンゴです！'):
+                        pass
+
 except:
     if page == 'ログイン':
         st.title('ログイン')
