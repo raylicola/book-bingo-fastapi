@@ -35,6 +35,10 @@ async def create_card(card: schemas.CardCreate, db: Session = Depends(get_db)):
 async def create_card(card: schemas.CardDelete, db: Session = Depends(get_db)):
     return crud.delete_card(db=db, card=card)
 
+@app.post('/update_card_item', response_model=schemas.CardItem)
+async def update_card_item(card_item: schemas.CardItemUpdate, db: Session = Depends(get_db)):
+    return crud.update_card_item(db=db, card_item=card_item)
+
 
 @app.get('/get_cards/{user_id}')
 async def get_cards(user_id: str, db: Session = Depends(get_db)):

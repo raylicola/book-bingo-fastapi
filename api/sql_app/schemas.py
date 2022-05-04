@@ -24,6 +24,8 @@ class Card(CardCreate):
     class Config:
         orm_mode = True
 
+class CardItemUpdate(BaseModel):
+    card_item_id: int
 class CardItemCreate(BaseModel):
     card_id: int
     title: str
