@@ -1,3 +1,8 @@
+# TODO:
+# 商品検索で同じものばかり出てこないよう改善
+# BINGO済みの画像を生成
+# BINGO機能を追加
+from calendar import c
 from tkinter import Image
 import streamlit as st
 import requests
@@ -24,6 +29,12 @@ books_genre_id_mapping = {
         '文庫': '001019',
         '新書': '001020',
     }
+
+bingo_combination = [
+    [1,2,3],[4,5,6],[7,8,9],
+    [1,4,7],[2,5,8],[3,6,9],
+    [1,5,9],[3,5,7]
+]
 
 page = st.sidebar.selectbox('ページを選択してください', ['ログイン', 'ユーザー登録', 'ビンゴ'])
 
@@ -99,21 +110,47 @@ try:
                 get_card_items_url = 'http://127.0.0.1:8000/get_card_items/' + str(card_id)
                 res = requests.get(get_card_items_url)
                 card_items = res.json()
+                checked_cols = []
                 for i in list(range(3)):
                     col= st.columns(3)
                     for j in list(range(3)):
                         with col[j]:
+                            card_item_id = card_items[i*3+j]['card_item_id']
+                            is_finished = card_items[i*3+j]['is_finished']
                             title = card_items[i*3+j]['title']
                             item_url = card_items[i*3+j]['item_url']
-                            if st.checkbox(str(i*3+j+1)):
-                                img = Image.open(f'api/img/translucent.jpeg')
-                                st.image(img, use_column_width=True)
-                            else:
-                                image_url = card_items[i*3+j]['image_url']
-                                is_finished = card_items[i*3+j]['is_finished']
+                            image_url = card_items[i*3+j]['image_url']
+                            if is_finished==True:
+                                checked_cols.append(i*3+j+1)
+                            update_card_items_url = 'http://127.0.0.1:8000/update_card_item'
+                            # checkbox = st.checkbox(str(i*3+j+1), value=is_finished)
+                            if is_finished == True:
+                                checkbox = st.checkbox(str(i*3+j+1), value=True)
                                 st.markdown(f'[{title}]({item_url})', unsafe_allow_html=True)
-                                #img = Image.open(image_url)
                                 st.image(image_url, use_column_width=True)
+                                if not checkbox:
+                                    data = {
+                                        'card_item_id': card_item_id
+                                    }
+                                    res = requests.post(
+                                        update_card_items_url,
+                                        data=json.dumps(data)
+                                    )
+                                    checked_cols.remove(i*3+j+1)
+                            else:
+                                checkbox = st.checkbox(str(i*3+j+1), value=False)
+                                st.markdown(f'[{title}]({item_url})', unsafe_allow_html=True)
+                                st.image(image_url, use_column_width=True)
+                                if checkbox:
+                                    data = {
+                                        'card_item_id': card_item_id
+                                    }
+                                    res = requests.post(
+                                        update_card_items_url,
+                                        data=json.dumps(data)
+                                    )
+                                    checked_cols.append(i*3+j+1)
+                st.write(checked_cols)
 except:
     if page == 'ログイン':
         st.title('ログイン')
