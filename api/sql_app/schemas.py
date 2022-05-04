@@ -10,6 +10,8 @@ class User(UserCreate):
     class Config:
         orm_mode = True
 
+class UserUpdate(BaseModel):
+    user_id: int
 class CardCreate(BaseModel):
     user_id: int
     sequence_num: int
@@ -18,6 +20,8 @@ class CardCreate(BaseModel):
 class CardDelete(BaseModel):
     card_id: int
 
+class CardUpdate(BaseModel):
+    card_id: int
 class Card(CardCreate):
     card_id: int
     is_finished: bool

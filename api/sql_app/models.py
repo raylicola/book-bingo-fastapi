@@ -14,7 +14,7 @@ class User(Base):
 class Card(Base):
     __tablename__ = "cards"
     card_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     sequence_num = Column(Integer)   # 1..3
     is_finished = Column(Boolean)
 
@@ -23,7 +23,7 @@ class Card(Base):
 class CardItem(Base):
     __tablename__ = "card_items"
     card_item_id = Column(Integer, primary_key=True, index=True)
-    card_id = Column(Integer, ForeignKey("cards.card_id", ondelete="SET NULL"), nullable=False)
+    card_id = Column(Integer, ForeignKey("cards.card_id", ondelete="CASCADE"), nullable=False)
     title = Column(String)
     item_url = Column(String)
     image_url = Column(String)

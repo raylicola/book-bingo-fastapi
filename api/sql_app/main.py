@@ -31,9 +31,17 @@ async def signup_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 async def create_card(card: schemas.CardCreate, db: Session = Depends(get_db)):
     return crud.create_card(db=db, card=card)
 
+@app.post('/update_user', response_model=schemas.User)
+async def create_card(user: schemas.UserUpdate, db: Session = Depends(get_db)):
+    return crud.update_user(db=db, user=user)
+
 @app.post('/delete_card')
 async def create_card(card: schemas.CardDelete, db: Session = Depends(get_db)):
     return crud.delete_card(db=db, card=card)
+
+@app.post('/update_card')
+async def update_card(card: schemas.CardUpdate, db: Session = Depends(get_db)):
+    return crud.update_card(db=db, card=card)
 
 @app.post('/update_card_item', response_model=schemas.CardItem)
 async def update_card_item(card_item: schemas.CardItemUpdate, db: Session = Depends(get_db)):

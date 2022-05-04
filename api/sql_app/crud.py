@@ -34,12 +34,29 @@ def create_user(db: Session, user: schemas.User):
     else:
         raise HTTPException(status_code=404, detail="This username is already registered.")
 
-# 指定したカードを削除
+# ユーザーのfinished_numを更新
+def update_user(db: Session, user: schemas.User):
+    db_user = db.query(models.User).filter(models.User.user_id == user.user_id).one()
+    db_user.finished_num += 1
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+# 指定したカードとそのアイテムを削除
 def delete_card(db: Session, card: schemas.Card):
     db_card = db.query(models.Card).filter(models.Card.card_id == card.card_id).one()
     db.delete(db_card)
+    db.query(models.CardItem).filter(models.CardItem.card_id == card.card_id).delete()
     db.commit()
     db.refresh(db_card)
+
+# 指定したカードをビンゴ済にする
+def update_card(db: Session, card: schemas.Card):
+    db_card = db.query(models.Card).filter(models.Card.card_id == card.card_id).one()
+    db_card.is_finished = not bool(db_card.is_finished)
+    db.commit()
+    db.refresh(db_card)
+    return db_card
 
 # カードアイテムのアップデート
 def update_card_item(db: Session, card_item: schemas.CardItem):
