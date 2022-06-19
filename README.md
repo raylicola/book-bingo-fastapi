@@ -51,7 +51,6 @@ https://user-images.githubusercontent.com/76393580/166720425-f417d7ac-044c-4134-
 カード作成, 削除後は自動でリロードが行われません. 一度他のカードのページを選択するなどしてください.
 
 ## 使用技術
-* Docker
 * FastAPI
 * [Streamlit](https://streamlit.io/)
 * [楽天ブックス書籍検索API](https://webservice.rakuten.co.jp/documentation/books-book-search)
